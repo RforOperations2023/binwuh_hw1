@@ -1,6 +1,7 @@
 library(shiny)
 library(ggplot2)
 library(DT)
+library(dplyr)
 
 # Load the dataset for the app
 data <- read.csv("licensed_drivers.csv")
@@ -25,13 +26,12 @@ ui <- fluidPage(
       # Select which state to display
       selectInput(inputId = "selected_state", 
                   label = "Select State:",
-                  choices = states),
+                  choices = sort(unique(data$State))),
       
       # Select which gender group to display
       checkboxGroupInput(inputId = "selected_gender",
                          label = "Select Gender:",
-                         choices = c("Female", "Male", "All"),
-                         selected = "All"),
+                         choices = c("Female", "Male")),
       
       # Show data table 
       checkboxInput(inputId = "show_data",
@@ -39,7 +39,7 @@ ui <- fluidPage(
                     value = TRUE),
       
       # Horizontal line for visual separation 
-      hr(),hr(),
+      hr(),
       
       # Add a download button
       downloadButton("downloadData", "Download Data")
@@ -50,9 +50,9 @@ ui <- fluidPage(
       
       br(), br(),    # a little bit of visual separation
       # Add the three different types of plots
-      plotOutput("linePlot"),
-      plotOutput("barPlot"),
-      plotOutput("boxPlot"),
+      # plotOutput("linePlot"),
+      # plotOutput("barPlot"),
+      # plotOutput("boxPlot"),
       
       # Add the data table
       DT::dataTableOutput(outputId = "driversTable")
@@ -60,16 +60,23 @@ ui <- fluidPage(
   )
 )
 
-# Define server function required to create the scatterplot ---------
+# Define server function required to create the plots
 server <- function(input, output) {
   # Filter the data based on the inputs
-  filteredData <- data
+  drivers_subset <- reactive({ 
+    req(input$selected_gender)
+    filter(data, Gender %in% input$selected_gender, State %in% input$selected_state)
+  })
+  
   
   # Create a data table
   output$driversTable <- DT::renderDataTable(
     if(input$show_data){
-      DT::datatable(data = filteredData)
-    })
+      DT::datatable(data = drivers_subset(), 
+                    options = list(pageLength = 10), 
+                    rownames = FALSE)
+    }
+  )
   
 }
 
