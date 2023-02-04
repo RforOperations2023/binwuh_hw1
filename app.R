@@ -58,7 +58,7 @@ ui <- fluidPage(
       # Add the three different types of plots
       plotOutput("linePlot"),
       plotOutput("barPlot"),
-      # plotOutput("boxPlot"),
+      plotOutput("scatterPlot"),
       
       # Add the data table
       DT::dataTableOutput(outputId = "driversTable")
@@ -93,13 +93,18 @@ server <- function(input, output) {
   
   output$barPlot <- renderPlot({
     ggplot(data = drivers_subset(), aes(x = Year, y = drivers_sum, fill = Cohort)) +
-      #geom_bar(color = "black", width = .7, position = 'fill') +
-      geom_bar(position="stack", stat="identity") + 
+      geom_bar(color = "black",position="stack", stat="identity") + 
       scale_fill_brewer(palette = "Set3") +
       theme_classic()
-    
   })
-  # Download the filtered data
+
+  output$scatterPlot <- renderPlot({
+    ggplot(data = drivers_subset())+
+      geom_point(aes(x=Year, y=drivers_sum,
+                     color=Cohort))
+  })
+  
+    # Download the filtered data
   output$downloadData <- downloadHandler(
     filename = function() {
       paste("filtered_data_", input$selected_state, "_", input$selected_gender, ".csv", sep = "")
@@ -110,6 +115,6 @@ server <- function(input, output) {
   )
 }
 
-# Run the application -----------------------------------------------
+# Run the application 
 shinyApp(ui = ui, server = server)
 
