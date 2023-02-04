@@ -57,7 +57,7 @@ ui <- fluidPage(
       br(), br(),    # a little bit of visual separation
       # Add the three different types of plots
       plotOutput("linePlot"),
-      # plotOutput("barPlot"),
+      plotOutput("barPlot"),
       # plotOutput("boxPlot"),
       
       # Add the data table
@@ -91,7 +91,14 @@ server <- function(input, output) {
       xlab('Year')
   })
   
-  
+  output$barPlot <- renderPlot({
+    ggplot(data = drivers_subset(), aes(x = Year, y = drivers_sum, fill = Cohort)) +
+      #geom_bar(color = "black", width = .7, position = 'fill') +
+      geom_bar(position="stack", stat="identity") + 
+      scale_fill_brewer(palette = "Set3") +
+      theme_classic()
+    
+  })
   # Download the filtered data
   output$downloadData <- downloadHandler(
     filename = function() {
