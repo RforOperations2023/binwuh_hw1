@@ -5,9 +5,9 @@ account: binwuhu
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 8222226
-bundleId: 6809313
+bundleId: 6809336
 url: https://binwuhu.shinyapps.io/binwuh_hw1/
-when: 1675504459.33083
-lastSyncTime: 1675504459.33084
+when: 1675505059.42026
+lastSyncTime: 1675505059.42027
 asMultiple: FALSE
 asStatic: FALSE

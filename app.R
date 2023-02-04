@@ -113,6 +113,7 @@ server <- function(input, output) {
       labs(title="Scatter Plot") + 
       theme(plot.title = element_text(hjust = 0.5)) + 
       labs(x = "Year", y = "Drivers") + 
+      scale_y_continuous(labels = scales::comma) + 
       scale_x_continuous(breaks = seq(1994, 2018, 1))
   })
   
