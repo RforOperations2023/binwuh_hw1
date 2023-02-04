@@ -15,7 +15,7 @@ ui <- fluidPage(
   theme = shinythemes::shinytheme("united"),
   
   # Application title -----------------------------------------------
-  titlePanel("Movie browser"),
+  titlePanel("Licensed Drivers"),
   
   # Sidebar layout with a input and output definitions --------------
   sidebarLayout(
@@ -26,12 +26,18 @@ ui <- fluidPage(
       # Select which state to display
       selectInput(inputId = "selected_state", 
                   label = "Select State:",
-                  choices = sort(unique(data$State))),
+                  choices = sort(unique(data$State)),
+                  selected = "pennsylvania"),
       
       # Select which gender group to display
-      checkboxGroupInput(inputId = "selected_gender",
+      radioButtons(inputId = "selected_gender",
                          label = "Select Gender:",
                          choices = c("Female", "Male")),
+      
+      # Select which age group to display
+      checkboxGroupInput(inputId = "selected_cohort",
+                         label = "Select Age group:",
+                         choices = sort(unique(data$Cohort))),
       
       # Show data table 
       checkboxInput(inputId = "show_data",
@@ -50,7 +56,7 @@ ui <- fluidPage(
       
       br(), br(),    # a little bit of visual separation
       # Add the three different types of plots
-      # plotOutput("linePlot"),
+      plotOutput("linePlot"),
       # plotOutput("barPlot"),
       # plotOutput("boxPlot"),
       
@@ -65,7 +71,8 @@ server <- function(input, output) {
   # Filter the data based on the inputs
   drivers_subset <- reactive({ 
     req(input$selected_gender)
-    filter(data, Gender %in% input$selected_gender, State %in% input$selected_state)
+    filter(data, Gender %in% input$selected_gender, State %in% input$selected_state,
+           Cohort %in% input$selected_cohort)
   })
   
   
@@ -77,6 +84,13 @@ server <- function(input, output) {
                     rownames = FALSE)
     }
   )
+  
+  output$linePlot <- renderPlot({
+    ggplot(data = drivers_subset(),aes(x=Year, y=drivers_sum, group=Gender, color=Cohort)) + 
+      geom_line(aes(group = Cohort)) + 
+      xlab('Year')
+  })
+  
   
   # Download the filtered data
   output$downloadData <- downloadHandler(
