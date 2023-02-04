@@ -69,7 +69,7 @@ server <- function(input, output) {
   })
   
   
-  # Create a data table
+  # Print data table if checked
   output$driversTable <- DT::renderDataTable(
     if(input$show_data){
       DT::datatable(data = drivers_subset(), 
@@ -78,6 +78,15 @@ server <- function(input, output) {
     }
   )
   
+  # Download the filtered data
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste("filtered_data_", input$selected_state, "_", input$selected_gender, ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(drivers_subset(), file, row.names = FALSE)
+    }
+  )
 }
 
 # Run the application -----------------------------------------------
