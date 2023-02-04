@@ -88,20 +88,32 @@ server <- function(input, output) {
   output$linePlot <- renderPlot({
     ggplot(data = drivers_subset(),aes(x=Year, y=drivers_sum, group=Gender, color=Cohort)) + 
       geom_line(aes(group = Cohort)) + 
-      xlab('Year')
+      labs(title="Line Graph") + 
+      theme(plot.title = element_text(hjust = 0.5)) +
+      labs(x = "Year", y = "Drivers") + 
+      geom_point() + 
+      scale_y_continuous(labels = scales::comma) + 
+      scale_x_continuous(breaks = seq(1994, 2018, 1))
   })
   
   output$barPlot <- renderPlot({
     ggplot(data = drivers_subset(), aes(x = Year, y = drivers_sum, fill = Cohort)) +
       geom_bar(color = "black",position="stack", stat="identity") + 
+      labs(title="Bar Plot") + 
       scale_fill_brewer(palette = "Set3") +
-      theme_classic()
+      theme(plot.title = element_text(hjust = 0.5)) + 
+      labs(x = "Year", y = "Drivers") + 
+      scale_y_continuous(labels = scales::comma) + 
+      scale_x_continuous(breaks = seq(1994, 2018, 1))
   })
 
   output$scatterPlot <- renderPlot({
     ggplot(data = drivers_subset())+
-      geom_point(aes(x=Year, y=drivers_sum,
-                     color=Cohort))
+      geom_point(aes(x=Year, y=drivers_sum, color=Cohort)) + 
+      labs(title="Scatter Plot") + 
+      theme(plot.title = element_text(hjust = 0.5)) + 
+      labs(x = "Year", y = "Drivers") + 
+      scale_x_continuous(breaks = seq(1994, 2018, 1))
   })
   
     # Download the filtered data
